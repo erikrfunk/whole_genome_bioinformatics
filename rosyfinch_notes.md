@@ -1,4 +1,7 @@
-1. Demultiplexing using custom bash script
+# Comments on analysis of Rosy-Finch genome sequences
+-------------------------------------------------------
+
+# 1. Demultiplexing using custom bash script
 
 /data2/rosyfinches/shell_scripts/sort_barcodes.sh \
 ROFI_Lane_1_TKD180302534-1_HL57NCCXY_L5_1.fq
@@ -7,7 +10,7 @@ This essentially greps the sequence header for the barcode (given through an inp
 
 Four barcodes still undetermined (one a probable match with single bp mismatch)
 
-2. Trim and QC 
+# 2. Trim and QC 
 
 performing pre-trim QC, trim, and post-trim QC using fastqc and trimmomatic in custom shell script \
 /data2/rosyfinches/shell_scripts/trim-and-QC.sh \
@@ -40,13 +43,13 @@ May think about a second set with softer filter parameters. \
 RF1_read1 pre trim = 14,473,504 total sequences at 150bp length \
 RF1_trimmed_1P = 11,192,354 total sequences at 90-150bp length
 
-3. Aligning reads
+# 3. Aligning reads
 
 For this pass, I am aligning reads to the House Finch genome using bwa \
 Processing these using the shell script \
 /data2/rosyfinches/shell_scripts/bwa-assemble.sh
 
-4. Processing alignments for variant calling
+# 4. Processing alignments for variant calling
 
 For this step, bam files are sorted, SM field is added as sample name in RG field of header, duplicates are marked, and final file is indexed \
 Processed using the shell script \
@@ -58,7 +61,7 @@ RF1-35 (excluding RF7 which is still missing data) \
 Batch2: \
 RF36-68 \
 
-5. Variant calling 
+# 5. Variant calling 
 
 Performing variant calling using gatk HaplotypeCaller
 
