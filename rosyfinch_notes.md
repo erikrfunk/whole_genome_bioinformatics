@@ -3,7 +3,7 @@
 
 # 1. Demultiplexing using custom bash script
 
-/data2/rosyfinches/whole_genome_scripts/sort_barcodes.sh \
+/data2/rosyfinches/whole_genome_scripts/sort_barcodes.sh
 
 Example input: ROFI_Lane_1_TKD180302534-1_HL57NCCXY_L5_1.fq
 
@@ -13,15 +13,15 @@ Four barcodes still undetermined (one a probable match with single bp mismatch)
 
 # 2. Trim and QC 
 
-performing pre-trim QC, trim, and post-trim QC using fastqc and trimmomatic in custom shell script \
+performing pre-trim QC, trim, and post-trim QC using fastqc and trimmomatic in custom shell script
 
-/data2/rosyfinches/whole_genome_scripts/trim-and-QC.sh \
+/data2/rosyfinches/whole_genome_scripts/trim-and-QC.sh
 
-progress saved to \
+progress saved to
 
 /data2/rosyfinches/whole_genome_scripts/trim_and_sort_QC_log.txt
 
-used TruSeq3-PE.fa sequences for adapters to trim
+used TruSeq3-PE.fa sequences for adapters to trim \
 added the sequences from Winnie for this library prep
 
 after trimming, QC showed continued levels of Nextera Transposase sequence contamination. \
@@ -65,7 +65,7 @@ Processing these in two batches \
 Batch1: \
 RF1-35 (excluding RF7 which is still missing data) \
 Batch2: \
-RF36-68 \
+RF36-68
 
 # 5. Variant calling 
 
