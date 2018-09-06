@@ -85,3 +85,97 @@ Finally, processing samples in loops of five using shell script \
 with samples sorted by
 
 /data2/rosyfinches/sample_names_batch1_subset1.txt
+
+Merging gvcfs from all samples into cohort gvcf
+
+	gatk CombineGVCFs \
+	-R reference.fasta \
+	-V SAMPLE1.g.vcf.gz \
+	-V SAMPLES2.g.vcf.gz \
+	-V ... \
+	-O cohort_name.g.vcf.gz 
+
+Genotyping the merged gvcf
+
+	gatk GenotypeGVCFs \
+	-R reference.fasta \
+	-V MERGED.g.vcf.gz \
+	-O OUTPUT.vcf.gz
+
+# 6. Filtering Variants
+
+Filtering variants using hard cutoffs recommended by BroadInstitute
+
+	gatk VariantFiltration \
+	-R reference.fasta \
+	-V input.vcf.gz \
+	-O output.vcf.gz \
+	--filter-expression "QD < 2 || FS > 60 || MQ < 40 || MQRankSum < -12.5 || ReadPosRankSum < -8.0" \
+	--filter-name "GATK_recommended_filters"
+
+	gatk SelectVariants \
+	-R reference.fasta \
+	-V input.vcf.gz \
+	--select-type-to-include SNP \
+	--exclude-filtered \
+	--exclude-non-variants
+
+Get total number of variants using 
+
+	gatk CountVariants \
+	-V input.vcf.gz
+
+For this dataset 50249125 snps were retained
+
+Additional filters for minor allele frequence less than 0.1 \
+Minimum read depth per site 2 \
+Max read depth per site 50 \
+Allow for 25% missing data by site (16 individuals) 
+
+	vcftools --gzvcf INPUT --out OUTPREFIX \
+	--maf 0.1 \
+	--max-meanDP 50 \
+	--min-meanDP 2 \
+	--max-missing 0.75 \
+	--recode # Writes a new vcf
+
+
+# 7. Phylogenetic Analyses
+
+Selecting a random fraction of snps for use in SVDquartets 
+
+	gatk SelectVariants \
+	-V input.vcf.gz \
+	--select-random-fraction PERCENT
+
+Verify the number of snps by rerunning the CountVariants command from above
+
+Convert the vcf to a phylip using
+
+	python vcf2phylip.py -i FILENAME -m MIN_SAMPLES_LOCUS -o OUTGROUP -f writes FASTA -n writes NEXUS
+
+Constructed phylogenetic tree using SVDquartets, run in paup command line
+
+	./Paup \
+	SVDQuartets evalQuartets=all nquartets=20000 bootstrap=standard \
+	nreps=500 nthreads=12 \
+	treeFile=BOOTTREES_OUTPUT.tre
+
+# 8. Extracting Gene Sequences
+
+Re-ran whole pipeline using a complete mitochonrion as reference \
+Then constructing a blastn database of all the consensus mt sequences
+
+/data2/rosyfinches/whole_genome_scripts/make-blastdb-and-seq-extract.sh
+
+Ran this using the L. arctoa reference sequence for cyt b
+
+Then make this new file a searchable database 
+
+	makeblastdb -in INFILE -parse_seqids -dbtype nucl
+
+Then run blastdbcmd using the previously constructed seq_ids
+
+	blastdbcmd -db NEW_DATABASE -dbtype nucl -entry_batch SEQ_IDS -out OUTFILE -outfmt %f
+
+
