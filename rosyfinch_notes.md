@@ -142,7 +142,7 @@ Allow for 20% missing data by site
 	--max-missing 0.8 \
 	--recode # Writes a new vcf
 
-Only 3488555 snps retained...
+Only 2505326 snps retained...
 
 
 # 7. Phylogenetic Analyses
