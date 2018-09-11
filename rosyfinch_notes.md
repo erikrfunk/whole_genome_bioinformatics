@@ -127,17 +127,22 @@ Get total number of variants using
 
 For this dataset 50249125 snps were retained
 
+Should also look at the histogram of per site depth \
+Want to filter out low and high tails that might be copy number variants \
+
 Additional filters for minor allele frequence less than 0.1 \
 Minimum read depth per site 2 \
-Max read depth per site 50 \
-Allow for 25% missing data by site (16 individuals) 
+Max read depth per site 9 \
+Allow for 20% missing data by site  
 
 	vcftools --gzvcf INPUT --out OUTPREFIX \
 	--maf 0.1 \
-	--max-meanDP 50 \
+	--max-meanDP 9 \
 	--min-meanDP 2 \
-	--max-missing 0.75 \
+	--max-missing 0.8 \
 	--recode # Writes a new vcf
+
+Only 3488555 snps retained...
 
 
 # 7. Phylogenetic Analyses
