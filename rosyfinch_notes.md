@@ -130,15 +130,21 @@ For this dataset 50249125 snps were retained
 Should also look at the histogram of per site depth \
 Want to filter out low and high tails that might be copy number variants \
 
-Additional filters for minor allele frequence less than 0.1 \
-Minimum read depth per site 2 \
-Max read depth per site 9 \
+Can using gatk VariantFiltration again to filter variants that might fall within these tails\
+Going to use depth cutoffs of 2 and 9 based on mean coverage\
+
+	gatk VariantFiltration \
+	-R reference.fasta \
+	-V input.vcf.gz \
+	-O output.vcf.gz \
+	--filter-expression "DP < 2 || DP > 9" \
+	--filter-name "added_depth_filters"
+
+Additional optional filters for minor allele frequence less than 0.1 \
 Allow for 20% missing data by site  
 
 	vcftools --gzvcf INPUT --out OUTPREFIX \
 	--maf 0.1 \
-	--max-meanDP 9 \
-	--min-meanDP 2 \
 	--max-missing 0.8 \
 	--recode # Writes a new vcf
 
@@ -183,4 +189,29 @@ Then run blastdbcmd using the previously constructed seq_ids
 
 	blastdbcmd -db NEW_DATABASE -dbtype nucl -entry_batch SEQ_IDS -out OUTFILE -outfmt %f
 
+
+# 9. Make per indiviual allele frequencies
+
+vcftools --vcf INPUT --freq --out OUTPUT
+
+Format this file for input into R using 
+
+	per-individual-allele-freqs.sh
+
+
+#10. Assess introgression/ILS with dstats
+
+Determine individuals to use that satisfy the (((1,2),3),O) topology \
+Filter vcf file to include only 1 individual for each taxon using vcftools
+
+	vcftools --vcf INPUT.vcf --out OUT-PREFIX --indv --indv --indv --indv --recode
+
+convert this to a fasta file using vcf2phylip.py with the fasta flag - see phylogenetics above \
+Input this fasta into dfoil's fasta2dfoil file converter
+
+	python fasta2dfil.py INPUT.fasta --out OUTPUT.fasta --names TAXA1,TAXA2,TAXA3,OUTGROUP
+
+Finally, calculate the statistic using dfoil.py with the mode set to dstat
+
+	python dfoil.py INPUT.fasta --out OUTPUT --mode dstat
 
