@@ -3,7 +3,7 @@
 
 # 1. Demultiplexing using custom bash script
 
-/data2/rosyfinches/whole_genome_scripts/sort_barcodes.sh
+	sort_barcodes.sh
 
 Example input: ROFI_Lane_1_TKD180302534-1_HL57NCCXY_L5_1.fq
 
@@ -15,11 +15,9 @@ Four barcodes still undetermined (one a probable match with single bp mismatch)
 
 performing pre-trim QC, trim, and post-trim QC using fastqc and trimmomatic in custom shell script
 
-/data2/rosyfinches/whole_genome_scripts/trim-and-QC.sh
+	trim-and-QC.sh
 
-progress saved to
-
-/data2/rosyfinches/whole_genome_scripts/trim_and_sort_QC_log.txt
+progress saved to trim_and_sort_QC_log.txt
 
 used TruSeq3-PE.fa sequences for adapters to trim \
 added the sequences from Winnie for this library prep
@@ -52,14 +50,14 @@ RF1_trimmed_1P = 11,192,354 total sequences at 90-150bp length
 For this pass, I am aligning reads to the House Finch genome using bwa \
 Processing these using the shell script
 
-/data2/rosyfinches/whole_genome_scripts/bwa-assemble.sh
+	bwa-assemble.sh
 
 # 4. Processing alignments for variant calling
 
 For this step, bam files are sorted, SM field is added as sample name in RG field of header, duplicates are marked, and final file is indexed \
 Processed using the shell script
 
-/data2/rosyfinches/whole_genome_scripts/merge-bam-files.sh
+	merge-bam-files.sh
 
 Processing these in two batches \
 Batch1: \
@@ -81,7 +79,7 @@ then index the reference fasta
 	samtools faidx /data2/rosyfinches/HouseFinch/final.assembly.homo.fa
 
 Finally, processing samples in loops of five using shell script \
-/data2/rosyfinches/whole_genome_scripts/call-haplotypes.sh \
+	call-haplotypes.sh
 with samples sorted by
 
 /data2/rosyfinches/sample_names_batch1_subset1.txt
@@ -128,32 +126,44 @@ Get total number of variants using
 For this dataset 50249125 snps were retained
 
 Should also look at the histogram of per site depth \
-Want to filter out low and high tails that might be copy number variants \
+Want to filter out low and high tails that might be copy number variants
 
 Can using gatk VariantFiltration again to filter variants that might fall within these tails\
-Going to use depth cutoffs of 2 and 9 based on mean coverage\
+Going to use depth cutoffs of 2 and 9 based on mean coverage
 
 	gatk VariantFiltration \
 	-R reference.fasta \
 	-V input.vcf.gz \
 	-O output.vcf.gz \
-	--filter-expression "DP < 2 || DP > 9" \
-	--filter-name "added_depth_filters"
+	--genotype-filter-expression "DP < 2 || DP > 9" \
+	--genotype-filter-name "added_depth_filters"
+	
+May need to re-run SelectVariants with the --exclude-filtered flag set
+Total number of variants did not change, but this may be becuase the filter is genotype level, not variant across all samples. \
+
+Also tried this same filter with vcftools --minDP and --maxDP. This also returned the same number of variants. Should verify this worked by calculating a depth by genotype table using vcftools \
+
+	vcftools --gzvcf INPUT \
+	--geno-depth
+
+What this filter seem to be doing is setting the genotype to ./., but retaining all other information about the sample variant, so the high depth numbers remain on the vcf, and thus will continue to be counted as part of the total number of variants. This may also skew depth statistics, but this I am not sure about
+
+Ultimately, I am going to make two datasets, one with the above filters, and one where only 25 percent missing data is allowed. See optional filters below.
 
 Additional optional filters for minor allele frequence less than 0.1 \
-Allow for 20% missing data by site  
+Allow for 25% missing data by site  
 
 	vcftools --gzvcf INPUT --out OUTPREFIX \
 	--maf 0.1 \
-	--max-missing 0.8 \
+	--max-missing 0.75 \
 	--recode # Writes a new vcf
 
-Only 2505326 snps retained...
-
+2505326 snps retained.
 
 # 7. Phylogenetic Analyses
 
-Selecting a random fraction of snps for use in SVDquartets 
+Selecting a random fraction of snps for use in SVDquartets. \
+Note, this may not be necessary depending on the number of variants left after filtering. 
 
 	gatk SelectVariants \
 	-V input.vcf.gz \
@@ -175,9 +185,9 @@ Constructed phylogenetic tree using SVDquartets, run in paup command line
 # 8. Extracting Gene Sequences
 
 Re-ran whole pipeline using a complete mitochonrion as reference \
-Then constructing a blastn database of all the consensus mt sequences
+Then constructed a blastn database of all the consensus mt sequences
 
-/data2/rosyfinches/whole_genome_scripts/make-blastdb-and-seq-extract.sh
+make-blastdb-and-seq-extract.sh
 
 Ran this using the L. arctoa reference sequence for cyt b
 
@@ -199,7 +209,7 @@ Format this file for input into R using
 	per-individual-allele-freqs.sh
 
 
-#10. Assess introgression/ILS with dstats
+# 10. Assess introgression/ILS with dstats
 
 Determine individuals to use that satisfy the (((1,2),3),O) topology \
 Filter vcf file to include only 1 individual for each taxon using vcftools
