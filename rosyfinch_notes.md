@@ -108,8 +108,10 @@ Filtering variants using hard cutoffs recommended by BroadInstitute
 	-R reference.fasta \
 	-V input.vcf.gz \
 	-O output.vcf.gz \
-	--filter-expression "QD < 2 || FS > 60 || MQ < 40 || MQRankSum < -12.5 || ReadPosRankSum < -8.0" \
+	--filter-expression "QD < 2.0 || FS > 60.0 || MQ < 40.0 || MQRankSum < -12.5 || ReadPosRankSum < -8.0" \
 	--filter-name "GATK_recommended_filters"
+
+Note: The decimals are required so that values are recognized as floats!
 
 	gatk SelectVariants \
 	-R reference.fasta \
@@ -129,19 +131,19 @@ Should also look at the histogram of per site depth \
 Want to filter out low and high tails that might be copy number variants
 
 Can using gatk VariantFiltration again to filter variants that might fall within these tails\
-Going to use depth cutoffs of 2 and 9 based on mean coverage
+Going to use depth cutoffs of 2 and 8 based on mean coverage
 
 	gatk VariantFiltration \
 	-R reference.fasta \
 	-V input.vcf.gz \
 	-O output.vcf.gz \
-	--genotype-filter-expression "DP < 2 || DP > 9" \
+	--genotype-filter-expression "DP < 2 || DP > 8" \
 	--genotype-filter-name "added_depth_filters"
 	
 May need to re-run SelectVariants with the --exclude-filtered flag set
-Total number of variants did not change, but this may be becuase the filter is genotype level, not variant across all samples. \
+Total number of variants did not change, but this may be becuase the filter is genotype level, not variant across all samples.
 
-Also tried this same filter with vcftools --minDP and --maxDP. This also returned the same number of variants. Should verify this worked by calculating a depth by genotype table using vcftools \
+Also tried this same filter with vcftools --minDP and --maxDP. This also returned the same number of variants. Should verify this worked by calculating a depth by genotype table using vcftools.
 
 	vcftools --gzvcf INPUT \
 	--geno-depth
@@ -158,7 +160,8 @@ Allow for 25% missing data by site
 	--max-missing 0.75 \
 	--recode # Writes a new vcf
 
-2505326 snps retained.
+New snp counts for all genotypes and for 75p about 6million and about 100k \
+Quite low for the 75p set but will check analyses anyway
 
 # 7. Phylogenetic Analyses
 
@@ -181,6 +184,8 @@ Constructed phylogenetic tree using SVDquartets, run in paup command line
 	SVDQuartets evalQuartets=all nquartets=20000 bootstrap=standard \
 	nreps=500 nthreads=12 \
 	treeFile=BOOTTREES_OUTPUT.tre
+
+I then like to just open up the bootstrap trees on the desktop version to make my consensus tree
 
 # 8. Extracting Gene Sequences
 
@@ -211,17 +216,24 @@ Format this file for input into R using
 
 # 10. Assess introgression/ILS with dstats
 
-Determine individuals to use that satisfy the (((1,2),3),O) topology \
-Filter vcf file to include only 1 individual for each taxon using vcftools
+The following sets up files for a D statistic that averages allele frequencies across populations of individuals \
+First, filter the vcf for only biallelic snps
 
-	vcftools --vcf INPUT.vcf --out OUT-PREFIX --indv --indv --indv --indv --recode
+	vcftools --vcf INPUT.vcf --out OUT-PREFIX --min-alleles 2 --max-alleles 2 --recode
 
-convert this to a fasta file using vcf2phylip.py with the fasta flag - see phylogenetics above \
-Input this fasta into dfoil's fasta2dfoil file converter
+Convert this to a simplified "Genotype" vcf file using Simon Martin's parseVCF.py code
 
-	python fasta2dfil.py INPUT.fasta --out OUTPUT.fasta --names TAXA1,TAXA2,TAXA3,OUTGROUP
+	python ~/genomics_general/VCF_processing/parseVCF.py -i input.vcf.gz --many more optional arguments | gzip > output.geno.gz
 
-Finally, calculate the statistic using dfoil.py with the mode set to dstat
+From this geno file, calculate frequencies. Again see Simon Martin's github for details on the arguments and file formats
 
-	python dfoil.py INPUT.fasta --out OUTPUT --mode dstat
+	python ~/genomics_general/freq.py -g input.gz -p -p -p --popsFile --target derived -o output
 
+Finally, take this frequency output and run the abba_baba.R script
+
+Or, can use an individual input and use the Dfoil approach from John Pease
+
+forth coming bash script for this
+
+Can also use the ABBABABAwindows.py script to calculate D, and Fd across windows.\
+Its recommended that you keep window size large enough to include about 100 snps. See the 'sites used' column to ensure this.
