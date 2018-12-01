@@ -22,7 +22,7 @@ if [ $# -lt 1 ]
          directory called 'sorted_bam_files'"
 
   else
-    while getopts i:f:a: option
+    while getopts i:r:t:p:b:s: option
     do
     case "${option}"
     in
