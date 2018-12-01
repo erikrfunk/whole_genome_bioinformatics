@@ -44,7 +44,7 @@ if [ $# -lt 1 ]
     echo "Beginning trimming for "$ID>>trim_and_QC_log.txt
     TrimmomaticPE -threads 6 \
     $fastqs_path"$ID"_read1.fastq $fastqs_path"$ID"_read2.fastq \
-    -baseout "$ID"_trimmed.fq.gz \
+    -baseout $fastqs_path"$ID"_trimmed.fq.gz \
     ILLUMINACLIP:$adapters:1:30:10 \
     LEADING:20 TRAILING:20 SLIDINGWINDOW:4:20 MINLEN:90>>trim_and_QC_log.txt
 
