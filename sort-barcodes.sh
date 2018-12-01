@@ -15,7 +15,8 @@ if [ $# -lt 1 ]
     [-o] output directory - default will make new directory called 'fastqs' in current directory"
 
   else
-    while getopts f:r:b:o:; do
+    while getopts f:r:b:o: option
+    do
     case "${option}"
     in
     f) forward=${OPTARG};;
@@ -25,15 +26,17 @@ if [ $# -lt 1 ]
     esac
     done
 
-    #barcodes="/data2/rosyfinches/barcodes/additional_barcodes.txt"
-    #forward="/data2/rosyfinches/Lane4/ROFI_Lane_4_TKD180302537-W-1_HL57NCCXY_L3_1.fq"
-    #reverse="/data2/rosyfinches/Lane4/ROFI_Lane_4_TKD180302537-W-1_HL57NCCXY_L3_2.fq"
-
-
-    outdir=""${outdir:-fastqs}""
-    if [ $outdir == fastqs ]
+    outdir="${outdir:-fastqs/}"
+    if [ $outdir == fastqs/ ]
     then
       mkdir fastqs
+    fi
+    
+    echo $forward
+    echo $reverse
+    echo $barcodes
+    echo $outdir
+
     count=1
     while read -r MATCH; do
     echo "This line reads" $MATCH
@@ -42,8 +45,8 @@ if [ $# -lt 1 ]
     sample_ID=$(awk -v counter=$count 'NR==counter {print $2}' $barcodes)
     echo "Writing $bc to" $sample_ID"read.fastq"
 
-    grep --no-group-separator -A 3 "$bc" $forward >> "/data2/rosyfinches/fastqs/"$sample_ID"_read1.fastq"
-    grep -A 3 --no-group-separator "$bc" $reverse >> "/data2/rosyfinches/fastqs/"$sample_ID"_read2.fastq"
+    grep --no-group-separator -A 3 "$bc" $forward >> $outdir$sample_ID"_read1.fastq"
+    grep -A 3 --no-group-separator "$bc" $reverse >> $outdir$sample_ID"_read2.fastq"
 
     count=$[$count + 1]
     done <"$barcodes"
