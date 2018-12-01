@@ -4,7 +4,7 @@
 
 if [ $# -lt 1 ]
   then
-    echo "Demultiplex from illumina pair-end fastq header.
+    echo "Demultiplex from illumina paired-end fastq header.
     [-f] forward read file
     [-r] reverse read file
     [-b] barcode file - this file should contain the barcodes in column 1, as they appear
@@ -32,11 +32,6 @@ if [ $# -lt 1 ]
       mkdir fastqs
     fi
     
-    echo $forward
-    echo $reverse
-    echo $barcodes
-    echo $outdir
-
     count=1
     while read -r MATCH; do
     echo "This line reads" $MATCH
