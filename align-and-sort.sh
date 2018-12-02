@@ -39,7 +39,7 @@ if [ $# -lt 1 ]
     fastqs_path="${fastqs_path:-fastqs/}"
     bamoutdir="${bamoutdir:-bam_files/}"
     sortedbamoutdir="${sortedbamoutdir:-sorted_bam_files/}"
-    if [ outdir == bam_files/ ]
+    if [ $bamoutdir == bam_files/ ]
       then
         mkdir bam_files
     fi
@@ -60,7 +60,7 @@ if [ $# -lt 1 ]
 
     done<"$seqs"
 
-    if [ sortedbamoutdir == sorted_bam_files/ ]
+    if [ $sortedbamoutdir == sorted_bam_files/ ]
       then
         mkdir sorted_bam_files
     fi
