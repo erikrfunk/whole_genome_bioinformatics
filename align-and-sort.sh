@@ -54,7 +54,7 @@ if [ $# -lt 1 ]
 
     bwa mem -t $threads $ref $fastqs_path"$ID"_trimmed_1P.fq.gz \
     $fastqs_path"$ID"_trimmed_2P.fq.gz | \
-    samtools view -b -o $outdir$ID.bam -S
+    samtools view -b -o $bamoutdir$ID.bam -S
 
     echo "sam file piped into samtools view to convert to .bam">>bwa_alignment_log.txt
 
