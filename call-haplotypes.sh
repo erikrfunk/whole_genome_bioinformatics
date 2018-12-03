@@ -34,7 +34,7 @@ if [ $# -lt 1 ]
   outdir="${outdir:-vcf_files/}"
   bam_path="${bam_path:-sorted_bam_files/}"
   bam_suffix="${bam_suffix:-.bam}"
-  if [ outdir == vcf_files/ ]
+  if [ ! -d $outdir ]
     then
       mkdir vcf_files/
   fi
@@ -46,3 +46,5 @@ if [ $# -lt 1 ]
   -O $outdir"$sample".g.vcf.gz \
   -ERC GVCF
   done<"$names"
+
+fi
