@@ -51,29 +51,53 @@ samtools and picard-tools. After sorting, the sample name is added as a RG (Read
 
     align-and-sort.sh -i -r
 
-ARGUMENTS
-[-i] Sample list
+ARGUMENTS \
+[-i] Sample list \
 [-r] Reference genome
 
-OPTIONAL ARGUMENTS
-[-t] Number of threads to use
+OPTIONAL ARGUMENTS \
+[-t] Number of threads to use \
 [-p] Path to trimmed fastqs - the default is a directory called 'fastqs' as
-     produced from the initial sorting
+     produced from the initial sorting \
 [-b] Output directory for bam files - default is to make a directory
-     called 'bam_files'
+     called 'bam_files' \
 [-s] Output directory for sorted bam files - default is to make a
      directory called 'sorted_bam_files'
 
 **Step 4:** Call Variants \
-This step uses HaplotypeCaller from GATK ver.4 in -ERC GVCF mode. This step is isolated from the rest of the merging and filtering of variants due to the time constraint HaplotypeCaller may impose. Becuase HaplotypeCaller call variants for one individual at a time, is has been necessary for my own analyses to manually parallelize this process by splitting up the sample list and running multiple jobs at once. By separating this step out, variants for all individuals can be called faster. Whenever done, the complete sample list can be used again to merge all g.vcf files and filter in the following step. For the time being, this step requires the input of the path to the sorted bam files. If multiple bam files per individual are in this directory (i.e. a sorted and unsorted), a bam suffix needs to be provided using the '-s' flag.
+This step uses HaplotypeCaller from GATK ver.4 in -ERC GVCF mode. This step is isolated from the rest of the merging and filtering of variants due to the time constraint HaplotypeCaller may impose. Becuase HaplotypeCaller call variants for one individual at a time, is has been necessary for my own analyses to manually parallelize this process by splitting up the sample list and running multiple jobs at once. By separating this step out, variants for all individuals can be called faster. Whenever done, the complete sample list can be used again to merge all g.vcf files and filter in the following step. This step begins by preparing the reference sequence dictionary and index for gatk. For the time being, this step requires the input of the path to the sorted bam files. If multiple bam files per individual are in this directory (i.e. a sorted and unsorted), a bam suffix needs to be provided using the '-s' flag.
 
     call-haplotypes.sh -i -r -p
 
-ARGUMENTS
-[-i] Sample list - may be truncated to include only some individuals
-[-r] Reference genome
+ARGUMENTS \
+[-i] Sample list - may be truncated to include only some individuals \
+[-r] Reference genome \
 [-p] Path to sorted bam files - this defauls to 'sorted_bam_files' created in the previous step
 
-OPTIONAL ARGUMENTS
-[-o] Output directory for vcf files - default is to make a directory called 'vcf_files'
+OPTIONAL ARGUMENTS \
+[-o] Output directory for vcf files - default is to make a directory called 'vcf_files' \
 [-s] Suffix of sorted bam - default is '.bam'
+
+**Step 5:** Merge, Genotype, and Filtering \
+This step merges the gvcfs from HaplotypeCaller into a cohort gvcf using GATK CombineGVCFs. This file is then genotyped with GenotypeGVCFs, and finally filtered with VariantFiltration. The path to the gvcf files is required, but defaults to the vcf_files directory created previously. The cohort gvcf is placed in the vcf_files directory as well, but the final genotyped, filtered cohort vcf is placed in the parent directory. For filtration, each of the standard filters can be set, but the gatk recommended filters are all set as defaults. If a different filter expression is desired, this should be run separately after as an individual filter step (see gatk4 user guide for VariantFiltration). Depth and minor allele frequency should be filtered for manually depending on the dataset. Finally, a name for the filter set is required, but defaults to 'GATK_recommended_filters'.
+
+    merge-gvcfs.sh -i -r -p -o
+
+ARGUMENTS \
+[-i] Sample list \
+[-r] Reference genome \
+[-p] Path to gvcfs \
+[-o] Name of the cohort
+
+OPTIONAL ARGUMENTS \
+[-q] QD filter - default is < 2.0 \
+[-f] FS filter - default is > 60.0 \
+[-m] MQ filter - default is < 40.0 \
+[-s] MQRankSum - default is < -12.5 \
+[-e] ReadPosRankSum - default is < -8.0 \
+[-n] Filter set name - default is 'GATK_recommended_filters'
+
+**Final Considerations** \
+The pipeline in its current state ends here with the first set of variant filters. The next step will almost certainly be to apply additional filters depending on the dataset and its intended use.
+
+This may include filtering for variant type (SNP vs INDEL), depth, or minor allele frequency. Many different programs can carry out these filters, including gatk as used above. See the documentation on 'VariantFiltration', 'SelectVariants', and the manual on the package 'vcftools'.
