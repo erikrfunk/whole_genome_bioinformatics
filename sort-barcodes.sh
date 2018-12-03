@@ -31,7 +31,7 @@ if [ $# -lt 1 ]
     then
       mkdir fastqs
     fi
-    
+
     count=1
     while read -r MATCH; do
     echo "This line reads" $MATCH

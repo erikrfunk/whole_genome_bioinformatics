@@ -11,7 +11,7 @@ This essentially greps the sequence header for the barcode (given through an inp
 
 Four barcodes still undetermined (one a probable match with single bp mismatch)
 
-# 2. Trim and QC 
+# 2. Trim and QC
 
 performing pre-trim QC, trim, and post-trim QC using fastqc and trimmomatic in custom shell script
 
@@ -24,12 +24,12 @@ added the sequences from Winnie for this library prep
 
 after trimming, QC showed continued levels of Nextera Transposase sequence contamination. \
 Adding this nextera transposase sequences to the TruSeq3-PE file
-	
+
 	>Transposase_1
 	AGATGTGTATAAGAGACAG
 
 No difference. Trying these:
-	
+
 	>Trans1
 	TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG
 	>Trans1_rc
@@ -39,7 +39,7 @@ No difference. Trying these:
 	>Trans2_rc
 	CTGTCTCTTATACACATCTCCGAGCCCACGAGAC
 
-Also changed allowed mismatch in adapter to 2. QC after both of these changes looked better and removed adapter contamination 
+Also changed allowed mismatch in adapter to 2. QC after both of these changes looked better and removed adapter contamination
 
 May think about a second set with softer filter parameters. \
 RF1_read1 pre trim = 14,473,504 total sequences at 150bp length \
@@ -65,7 +65,7 @@ RF1-35 (excluding RF7 which is still missing data) \
 Batch2: \
 RF36-68
 
-# 5. Variant calling 
+# 5. Variant calling
 
 Performing variant calling using gatk HaplotypeCaller
 
@@ -91,7 +91,7 @@ Merging gvcfs from all samples into cohort gvcf
 	-V SAMPLE1.g.vcf.gz \
 	-V SAMPLES2.g.vcf.gz \
 	-V ... \
-	-O cohort_name.g.vcf.gz 
+	-O cohort_name.g.vcf.gz
 
 Genotyping the merged gvcf
 
@@ -120,7 +120,7 @@ Note: The decimals are required so that values are recognized as floats!
 	--exclude-filtered \
 	--exclude-non-variants
 
-Get total number of variants using 
+Get total number of variants using
 
 	gatk CountVariants \
 	-V input.vcf.gz
@@ -139,7 +139,7 @@ Going to use depth cutoffs of 2 and 8 based on mean coverage
 	-O output.vcf.gz \
 	--genotype-filter-expression "DP < 2 || DP > 8" \
 	--genotype-filter-name "added_depth_filters"
-	
+
 May need to re-run SelectVariants with the --exclude-filtered flag set
 Total number of variants did not change, but this may be becuase the filter is genotype level, not variant across all samples.
 
@@ -166,7 +166,7 @@ Quite low for the 75p set but will check analyses anyway
 # 7. Phylogenetic Analyses
 
 Selecting a random fraction of snps for use in SVDquartets. \
-Note, this may not be necessary depending on the number of variants left after filtering. 
+Note, this may not be necessary depending on the number of variants left after filtering.
 
 	gatk SelectVariants \
 	-V input.vcf.gz \
@@ -196,7 +196,7 @@ make-blastdb-and-seq-extract.sh
 
 Ran this using the L. arctoa reference sequence for cyt b
 
-Then make this new file a searchable database 
+Then make this new file a searchable database
 
 	makeblastdb -in INFILE -parse_seqids -dbtype nucl
 
@@ -209,7 +209,7 @@ Then run blastdbcmd using the previously constructed seq_ids
 
 vcftools --vcf INPUT --freq --out OUTPUT
 
-Format this file for input into R using 
+Format this file for input into R using
 
 	per-individual-allele-freqs.sh
 

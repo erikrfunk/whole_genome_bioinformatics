@@ -1,4 +1,4 @@
-# Shell script to sort bam files according to a sample identifier 
+# Shell script to sort bam files according to a sample identifier
 # and prepare them for haplotype calling, including adding SM tag in RG, marking duplicates, and indexing
 
 # This requries a txt file with a list of sample names you wish to sort bam files for (samplenames)
