@@ -69,7 +69,7 @@ if [ $# -lt 1 ]
     gatk VariantFiltration \
     -R $ref \
     -V $cohort.vcf.gz \
-    -O "$cohort"_filtered.vcf.gz
+    -O "$cohort"_filtered.vcf.gz \
     --filter-expression "QD $qd || FS $fs || MQ $mq || MQRankSum $mqranksum || ReadPosRankSum $readposranksum" \
     --filter-name $filter_set_name
 
