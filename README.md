@@ -2,15 +2,17 @@ This repository contains the shell scripts used for whole genome sequence analys
 
 Notes on the first iteration and a description of the pipeline on the rosy-finch data is located in rosyfinch_notes.md
 
-Note: Most all code here is invoked in shell scripts that have not yet been formatted to take input directly. Instead, input files and directories need to be changed in the bash script - sorry
 The call of any script without arguments will show a short description and the arguments list.
 
-The workflow is broken up into ## sections, with each breakpoint used for validation or to provide modularity.
+The workflow is broken up into 5 sections, with each breakpoint used for validation or to provide modularity.
 
 Required programs:
 fastqc
 Trimmomatic
-
+bwa
+samtools
+picard-tools
+GATK v4
 
 ------------------------------------------------------------------------------------------------------
 
@@ -54,7 +56,6 @@ ARGUMENTS
 [-r] Reference genome
 
 OPTIONAL ARGUMENTS
-
 [-t] Number of threads to use
 [-p] Path to trimmed fastqs - the default is a directory called 'fastqs' as
      produced from the initial sorting
@@ -62,3 +63,17 @@ OPTIONAL ARGUMENTS
      called 'bam_files'
 [-s] Output directory for sorted bam files - default is to make a
      directory called 'sorted_bam_files'
+
+**Step 4:** Call Variants \
+This step uses HaplotypeCaller from GATK ver.4 in -ERC GVCF mode. This step is isolated from the rest of the merging and filtering of variants due to the time constraint HaplotypeCaller may impose. Becuase HaplotypeCaller call variants for one individual at a time, is has been necessary for my own analyses to manually parallelize this process by splitting up the sample list and running multiple jobs at once. By separating this step out, variants for all individuals can be called faster. Whenever done, the complete sample list can be used again to merge all g.vcf files and filter in the following step. For the time being, this step requires the input of the path to the sorted bam files. If multiple bam files per individual are in this directory (i.e. a sorted and unsorted), a bam suffix needs to be provided using the '-s' flag.
+
+    call-haplotypes.sh -i -r -p
+
+ARGUMENTS
+[-i] Sample list - may be truncated to include only some individuals
+[-r] Reference genome
+[-p] Path to sorted bam files - this defauls to 'sorted_bam_files' created in the previous step
+
+OPTIONAL ARGUMENTS
+[-o] Output directory for vcf files - default is to make a directory called 'vcf_files'
+[-s] Suffix of sorted bam - default is '.bam'
