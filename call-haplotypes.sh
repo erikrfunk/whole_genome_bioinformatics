@@ -40,9 +40,10 @@ if [ $# -lt 1 ]
   fi
 
   echo "Creating sequence dictionary for HaplotypeCaller"
+  prefix=$(cat <<< $ref | sed -r 's/^(.*)\.\w+$/\1/')
   picard-tools CreateSequenceDictionary \
   R=$ref \
-  O=$ref.dict
+  O=$prefix
 
   echo "Indexing reference"
   samtools faidx $ref
