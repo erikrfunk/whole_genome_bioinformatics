@@ -50,7 +50,7 @@ if [ $# -lt 1 ]
 
     files=""
     while read -r sample; do
-    files="$files-V $sample.g.vcf.gz "
+    files="$files-V $gvcf_path$sample.g.vcf.gz "
     done<"$names"
 
     echo "Combining gvcf files."
