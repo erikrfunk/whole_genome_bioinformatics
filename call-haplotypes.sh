@@ -42,6 +42,7 @@ if [ $# -lt 1 ]
   echo "Creating sequence dictionary for HaplotypeCaller"
   picard-tools CreateSequenceDictionary \
   R=$ref \
+  O=$ref.dict
 
   echo "Indexing reference"
   samtools faidx $ref
