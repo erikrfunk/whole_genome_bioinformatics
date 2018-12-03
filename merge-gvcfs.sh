@@ -42,8 +42,8 @@ if [ $# -lt 1 ]
 
     gvcf_path="${gvcf_path:-vcf_files/}"
     qd="${qd:-< 2.0}"
-    fs="${fs:-> 60}"
-    mq="${mq:-< 40}"
+    fs="${fs:-> 60.0}"
+    mq="${mq:-< 40.0}"
     mqranksum="${mqranksum:-< -12.5}"
     readposranksum="${readposrank:-< -8.0}"
     filter_set_name="${filter_set_name:-GATK_recommended_filters}"
