@@ -70,7 +70,7 @@ if [ $# -lt 1 ]
     -R $ref \
     -V $cohort.vcf.gz \
     -O "$cohort"_filtered.vcf.gz
-    --filter-expresion "QD $qd || FS $fs || MQ $mq || MQRankSum $mqranksum || ReadPosRankSum $readposranksum" \
+    --filter-expression "QD $qd || FS $fs || MQ $mq || MQRankSum $mqranksum || ReadPosRankSum $readposranksum" \
     --filter-name $filter_set_name
 
 fi
