@@ -39,6 +39,14 @@ if [ $# -lt 1 ]
       mkdir vcf_files/
   fi
 
+  echo "Creating sequence dictionary for HaplotypeCaller"
+  picard-tools CreateSequenceDictionary \
+  R=$ref \
+
+  echo "Indexing reference"
+  samtools faidx $ref
+
+  echo "Calling Haplotypes"
   while read -r sample; do
   gatk HaplotypeCaller \
   -R $ref \
