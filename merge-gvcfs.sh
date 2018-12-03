@@ -42,7 +42,7 @@ if [ $# -lt 1 ]
 
     gvcf_path="${gvcf_path:-vcf_files/}"
     qd="${qd:-< 2.0}"
-    fs="${fs=:-> 60}"
+    fs="${fs:-> 60}"
     mq="${mq:-< 40}"
     mqranksum="${mqranksum:-< -12.5}"
     readposranksum="${readposrank:-< -8.0}"
