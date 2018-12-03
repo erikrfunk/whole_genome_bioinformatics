@@ -43,7 +43,7 @@ if [ $# -lt 1 ]
   prefix=$(cat <<< $ref | sed -r 's/^(.*)\.\w+$/\1/')
   picard-tools CreateSequenceDictionary \
   R=$ref \
-  O=$prefix
+  O=$prefix.dict
 
   echo "Indexing reference"
   samtools faidx $ref
