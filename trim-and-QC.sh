@@ -10,24 +10,31 @@ if [ $# -lt 1 ]
     Following trimming, a post-trim qc will also be run using fastqc.
 
     [-i] Sample list - sample name should match the prefix of the fastq files
-    [-f] Path to fastq files - should contain files in the format 'SAMPLENAME_read1.fastq' and 'SAMPLENAME_read2.fastq'
+    [-p] Path to fastq files
+    [-f] Suffix of forward reads (e.g. R1_000.fastq.gz)
+    [-r] Suffix of reverse reads (e.g. R2_000.fastq.gz)
 
     OPTIONAL ARGUMENTS
 
-    [-a] File with adapter sequences for Trimmomatic. Defaults to the TruSeq3.fa file in this repository"
+    [-a] File with adapter sequences for Trimmomatic. Defaults to the TruSeq3.fa file in this repository
+    [-t] Number of threads to use"
 
   else
-    while getopts i:f:a: option
+    while getopts i:p:f:r:a:t: option
     do
     case "${option}"
     in
     i) filename=${OPTARG};;
-    f) fastqs_path=${OPTARG};;
+    p) fastqs_path=${OPTARG};;
+    f) forward_suff=${OPTARG};;
+    r) reverse_suff=${OPTARG};;
     a) adapters=${OPTARG};;
+    t) threads=${OPTARG};;
     esac
     done
 
     adapters="${adapters:-TruSeq3-PE.fa}"
+    threads="${threads:-1}"
 
     echo "Trim and QC for "$filename>>trim_and_QC_log.txt
     mkdir pre_trim_QC_files
@@ -35,21 +42,21 @@ if [ $# -lt 1 ]
 
     while read -r ID; do
     echo "Beginning pre-trim QC for "$ID>>trim_and_QC_log.txt
-    fastqc -t 6 \
-    $fastqs_path"$ID"_read1.fastq \
-    $fastqs_path"$ID"_read2.fastq \
+    fastqc -t $threads \
+    $fastqs_path"$ID"*"$forward_suff" \
+    $fastqs_path"$ID"*"$reverse_suff" \
     --outdir pre_trim_QC_files/
     echo $ID" pre-trim QC done" >> trim_and_QC_log.txt
 
     echo "Beginning trimming for "$ID>>trim_and_QC_log.txt
-    TrimmomaticPE -threads 6 \
-    $fastqs_path"$ID"_read1.fastq $fastqs_path"$ID"_read2.fastq \
+    TrimmomaticPE -threads $threads \
+    $fastqs_path"$ID"*"$forward_suff" $fastqs_path"$ID"*"$reverse_suff" \
     -baseout $fastqs_path"$ID"_trimmed.fq.gz \
     ILLUMINACLIP:$adapters:1:30:10 \
     LEADING:20 TRAILING:20 SLIDINGWINDOW:4:20 MINLEN:90>>trim_and_QC_log.txt
 
     echo "Beginning post-trim for "$ID>>trim_and_QC_log.txt
-    fastqc -t 6 \
+    fastqc -t $threads \
     $fastqs_path"$ID"_trimmed_1P.fq.gz \
     $fastqs_path"$ID"_trimmed_2P.fq.gz \
     --outdir post_trim_QC_files/

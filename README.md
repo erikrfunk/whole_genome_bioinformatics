@@ -17,7 +17,7 @@ GATK v4
 ------------------------------------------------------------------------------------------------------
 
 **Step 1:** Demultiplexing \
-This step can be done with any freely available demultiplexing program you prefer. The script provided here is a simple approach based on a grep search, though could be modified fairly easily to allow mismatches. Default is to make a new directory called "fastqs" in the current directory.
+If the data we demultiplexed by whoever sequenced, this step can be skipped. This step can also be done with any freely available demultiplexing program you prefer. The script provided here is a simple approach based on a grep search, though could be modified fairly easily to allow mismatches. Default is to make a new directory called "fastqs" in the current directory.
 
     sort-barcodes.sh -f -r -b
 
@@ -33,16 +33,19 @@ OPTIONAL ARGUMENTS \
 **Step 2:** Trim and Quality Control \
 This step trims sequences using TrimmomaticPE, and performs quality control using fastqc on fastq files both before and after trimming. This step requires a text file with all sample names wanting to be included. These sample names should match the prefixes of the fastq files. This script also requires the path to the fastq files is provided.
 
-Two new directories will be created, one for each quality control run. This allows the user to evaluate the effectiveness of trimming prior to moving on to the next step. An optional argument can be used to pass adapter sequences to trimmomatic. This will default to the TruSeq3.txt file, so if no arguments are passed using this flag, the TruSeq3 file needs to be in the directory. At this time, any additional adjustments to the trimmomatic settings or trim settings need to be made manually in the script, in the code block containing the TrimmomaticPE function call.
+Two new directories will be created, one for each quality control run. This allows the user to evaluate the effectiveness of trimming prior to moving on to the next step. An optional argument can be used to pass adapter sequences to trimmomatic. This will default to the TruSeq3.fa file, so if no arguments are passed using this flag, the TruSeq3 file needs to be in the directory. At this time, any additional adjustments to the trimmomatic settings or trim settings need to be made manually in the script, in the code block containing the TrimmomaticPE function call.
 
-    trim-and-QC.sh -i -f
+    trim-and-QC.sh -i -p -f -r
 
 ARGUMENTS \
 [-i] Sample list \
-[-f] Path to fastq files - should contain files in the format 'SAMPLENAME_read1.fastq' and 'SAMPLENAME_read2.fastq'
+[-p] Path to fastq files \
+[-f] Suffix of forward reads (e.g. R1_000.fastq.gz) \
+[-r] Suffix of reverse reads (e.g. R2_000.fastq.gz) \
 
 OPTIONAL ARGUMENTS \
-[-a] File with adapter sequences for Trimmomatic
+[-a] File with adapter sequences for Trimmomatic - Default is TruSeq3-PE.fa \
+[-t] Number of threads to use
 
 **Step 3:** Assembly and Prep for Variant Calling \
 This step aligns fastq reads to a reference genome using bwa mem.
@@ -57,8 +60,7 @@ ARGUMENTS \
 
 OPTIONAL ARGUMENTS \
 [-t] Number of threads to use \
-[-p] Path to trimmed fastqs - the default is a directory called 'fastqs' as
-     produced from the initial sorting \
+[-p] Path to trimmed fastqs - the default is a directory called 'fastqs' as produced from the initial sorting \
 [-b] Output directory for bam files - default is to make a directory
      called 'bam_files' \
 [-s] Output directory for sorted bam files - default is to make a
