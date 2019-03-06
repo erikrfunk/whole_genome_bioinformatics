@@ -1,10 +1,10 @@
 #!/bin/bash
 
-InputDir="/data2/rosyfinches/vcf_files/0p/"
-OutDir="/data2/rosyfinches/vcf_files/0p/"
-OutfilePrefix="0p_AUS"
+InputDir="/data2/rosyfinches/vcf_files/no_maf_filter/"
+OutDir="/data2/rosyfinches/vcf_files/no_maf_filter/"
+OutfilePrefix="75p_no_maf_filter_AUS"
 SampleNames="/data2/rosyfinches/sample_names/sample_names_BCRF.txt"
-InVCF="0p_AUS_snps_only-variants_biallelic.vcf"
+InVCF="75p_no_maf_AUS.recode.vcf"
 
 
 while read -r SAMP; do
@@ -20,5 +20,3 @@ rm $SAMP"_temp_allele_freqs.log"
 rm $SAMP"_temp_only_alleles"
 
 done<"$SampleNames"
-
-
