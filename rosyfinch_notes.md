@@ -207,14 +207,19 @@ Then run blastdbcmd using the previously constructed seq_ids
 	blastdbcmd -db NEW_DATABASE -dbtype nucl -entry_batch SEQ_IDS -out OUTFILE -outfmt %f
 
 
-# 9. Make per indiviual allele frequencies
+# 9. Make per individual allele frequencies
 
-vcftools --vcf INPUT --freq --out OUTPUT
+For all indivduals, use
 
-Format this file for input into R using
+	vcftools --vcf INPUT --freq --out OUTPUT
+
+For individuals, do the same one individual at a time, using
 
 	per-individual-allele-freqs.sh
 
+If using this for conStruct, reformat this using
+
+	format-allele-freqs.R
 
 # 10. Assess introgression/ILS with dstats
 
