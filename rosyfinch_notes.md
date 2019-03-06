@@ -185,7 +185,9 @@ Constructed phylogenetic tree using SVDquartets, run in paup command line
 	nreps=500 nthreads=12 \
 	treeFile=BOOTTREES_OUTPUT.tre
 
-I then like to just open up the bootstrap trees on the desktop version to make my consensus tree
+I then like to just open up the bootstrap trees on the desktop version to make my consensus tree, but this can be done command line (I think this is right)
+
+	contree /majrul cutoff=50 le50
 
 # 8. Extracting Gene Sequences
 
