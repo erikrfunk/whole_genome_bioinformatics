@@ -24,7 +24,7 @@ If the data we demultiplexed by whoever sequenced, this step can be skipped. Thi
 ARGUMENTS \
 [-f] forward read file \
 [-r] reverse read file \
-[-b] barcode file - this file should contain the barcodes in column 1, as    they appear \
+[-b] barcode file - this file should contain the barcodes in column 1, as they appear \
      in the fastq header, and the corresponding sample ID in column 2. See barcodes.txt
 
 OPTIONAL ARGUMENTS \
@@ -32,6 +32,8 @@ OPTIONAL ARGUMENTS \
 
 **Step 2:** Trim and Quality Control \
 This step trims sequences using TrimmomaticPE, and performs quality control using fastqc on fastq files both before and after trimming. This step requires a text file with all sample names wanting to be included. These sample names should match the prefixes of the fastq files. This script also requires the path to the fastq files is provided.
+
+Depending on the sequencing effort, each sample may have been sequenced across multiple lanes, and the fastq filename may contain some lane info. In this case, you can either try to merge the two fastqs now, or just trim them independently and merge them at the alignment stage. If trimming them independently, a sample list that includes the lane info is needed so that the output file is named properly. For some direction on how to generate this type of sample list, see 'multilane_sample_list.md' in the modules folder of this repository.
 
 Two new directories will be created, one for each quality control run. This allows the user to evaluate the effectiveness of trimming prior to moving on to the next step. An optional argument can be used to pass adapter sequences to trimmomatic. This will default to the TruSeq3.fa file, so if no arguments are passed using this flag, the TruSeq3 file needs to be in the directory. At this time, any additional adjustments to the trimmomatic settings or trim settings need to be made manually in the script, in the code block containing the TrimmomaticPE function call.
 
