@@ -217,9 +217,7 @@ For individuals, do the same one individual at a time, using
 
 	per-individual-allele-freqs.sh
 
-If using this for conStruct, reformat this using
 
-	format-allele-freqs.R
 
 # 10. Assess introgression/ILS with dstats
 
