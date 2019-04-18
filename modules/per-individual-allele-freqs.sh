@@ -19,16 +19,17 @@ if [ $# -lt 1 ]
     esac
     done
 
-while read -r SAMP; do
+    while read -r SAMP; do
 
-vcftools --vcf $input_vcf --indv $SAMP --freq --out $SAMP"_temp_allele_freqs"
+    vcftools --vcf $input_vcf --indv $SAMP --freq --out $SAMP"_temp_allele_freqs"
 
-awk 'FNR>1 && $3<3 {print $5}' $SAMP"_temp_allele_freqs.frq" > $SAMP"_temp_only_alleles"
+    awk 'FNR>1 && $3<3 {print $5}' $SAMP"_temp_allele_freqs.frq" > $SAMP"_temp_only_alleles"
 
-sed s/[ACTG]:// $SAMP"_temp_only_alleles" | tr '\n' ',' | sed s/^/$SAMP","/ | sed s/','$/'\n'/ >> $output_prefix"_allele_freq_table.csv"
+    sed s/[ACTG]:// $SAMP"_temp_only_alleles" | tr '\n' ',' | sed s/^/$SAMP","/ | sed s/','$/'\n'/ >> $output_prefix"_allele_freq_table.csv"
 
-rm $SAMP"_temp_allele_freqs.frq"
-rm $SAMP"_temp_allele_freqs.log"
-rm $SAMP"_temp_only_alleles"
+    rm $SAMP"_temp_allele_freqs.frq"
+    rm $SAMP"_temp_allele_freqs.log"
+    rm $SAMP"_temp_only_alleles"
 
-done<"$sample_names"
+    done<"$sample_names"
+fi
