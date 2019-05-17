@@ -14,4 +14,4 @@ samtools mpileup -uf $ref "$bamdir"*_sorted_RGadded_dupmarked.bam | bcftools cal
 echo "filtering low quality snps (<100)" >> log
 awk '$6 > 100 {print $0}' > "$ID"_snps_indels_filtered.vcf "$ID"_snps_indels_short.vcf
 echo "add the header and check length of column 4 and 5 to make sure they are snp type variants" >> log
-awk 'FNR==1 || length($4)==1 && length($5)==1 {print $0}'> "$ID"_snps_filtered.vcf "$ID"_snps_indels_filtered.vcf
+awk '$1~/^#/ || length($4)==1 && length($5)==1 {print $0}'> "$ID"_snps_filtered.vcf "$ID"_snps_indels_filtered.vcf
