@@ -8,7 +8,7 @@ bamdir="/data2/rosyfinches/sorted_bam_files/"
 ID="rosyfinches" # This will be used as a prefix for the output file
 
 echo "making a pileup file for" $ID >> log
-samtools mpileup -uf $ref "$bamdir"*_sorted_RGadded_dupmarked.bam | bcftools call -cv > "$ID"_snps_indels.vcf
+samtools mpileup -uf $ref "$bamdir"*_sorted_RGadded_dupmarked.bam -t DP,AD,DP4,INFO/AD,SP | bcftools call -cv > "$ID"_snps_indels.vcf
 #echo "removing all lines with two comment marks" >> log
 #grep -v "##" "$ID"_snps_indels.vcf > "$ID"_snps_indels_short.vcf
 echo "filtering low quality snps (<100)" >> log
