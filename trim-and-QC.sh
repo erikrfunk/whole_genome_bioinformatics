@@ -43,14 +43,14 @@ if [ $# -lt 1 ]
     while read -r ID; do
     echo "Beginning pre-trim QC for "$ID>>trim_and_QC_log.txt
     fastqc -t $threads \
-    $fastqs_path"$ID"*"$forward_suff" \
-    $fastqs_path"$ID"*"$reverse_suff" \
+    $fastqs_path"$ID"_*"$forward_suff" \
+    $fastqs_path"$ID"_*"$reverse_suff" \
     --outdir pre_trim_QC_files/
     echo $ID" pre-trim QC done" >> trim_and_QC_log.txt
 
     echo "Beginning trimming for "$ID>>trim_and_QC_log.txt
     TrimmomaticPE -threads $threads \
-    $fastqs_path"$ID"*"$forward_suff" $fastqs_path"$ID"*"$reverse_suff" \
+    $fastqs_path"$ID"_*"$forward_suff" $fastqs_path"$ID"_*"$reverse_suff" \
     -baseout $fastqs_path"$ID"_trimmed.fq.gz \
     ILLUMINACLIP:$adapters:1:30:10 \
     LEADING:20 TRAILING:20 SLIDINGWINDOW:4:20 MINLEN:90>>trim_and_QC_log.txt

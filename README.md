@@ -31,7 +31,7 @@ OPTIONAL ARGUMENTS \
 [-o] output directory - default will make new directory called 'fastqs' in current directory
 
 **Step 2:** Trim and Quality Control \
-This step trims sequences using TrimmomaticPE, and performs quality control using fastqc on fastq files both before and after trimming. This step requires a text file with all sample names wanting to be included. These sample names should match the prefixes of the fastq files. This script also requires the path to the fastq files is provided.
+This step trims sequences using TrimmomaticPE, and performs quality control using fastqc on fastq files both before and after trimming. This step requires a text file with all sample names wanting to be included. These sample names should match the prefixes of the fastq files, and the name of the fastq file should start with the sample name followed by an underscore. This script also requires the path to the fastq files is provided.
 
 Depending on the sequencing effort, each sample may have been sequenced across multiple lanes, and the fastq filename may contain some lane info. In this case, you can either try to merge the two fastqs now, or just trim them independently and merge them at the alignment stage. If trimming them independently, a sample list that includes the lane info is needed so that the output file is named properly. For some direction on how to generate this type of sample list, see 'multilane_sample_list.md' in the modules folder of this repository.
 

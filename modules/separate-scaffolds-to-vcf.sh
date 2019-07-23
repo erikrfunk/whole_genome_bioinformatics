@@ -1,15 +1,12 @@
 #!/bin/bash
 
-'''
-Divide a vcf.gz file into individual scaffolds using vcf tools
-A new directory will be created to house these
-This will loop through a list of scaffolds that should be separated out into
-individual vcf files
-'''
-
 if [ $# -lt 1 ]
   then
-    echo "Separates a list of scaffolds into a separate vcf.
+    echo "Divide a vcf.gz file into individual scaffolds using vcf tools
+    A new directory will be created to house these
+    This will loop through a list of scaffolds that should be separated out into
+    individual vcf files.
+
     [-i] input VCF file - needs to be gzipped
     [-s] list of scaffolds - one per line as they appear in the vcf file
 
