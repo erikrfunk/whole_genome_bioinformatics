@@ -38,7 +38,7 @@ if [ $# -lt 1 ]
         bcftools mpileup -Ou -f $ref--ignore-RG -a AD,ADF,DP,SP,INFO/AD,INFO/ADF \
         "$bamdir"*.bam | bcftools call -mv > "$ID"_raw_variants.vcf
       else
-        bcftools mpileup -Ou -f $ref--ignore-RG --regions-file $regions \
+        bcftools mpileup -Ou -f $ref --ignore-RG --regions-file $regions \
         -a AD,ADF,DP,SP,INFO/AD,INFO/ADF \
         "$bamdir"*.bam | bcftools call -mv > "$ID"_raw_variants.vcf
     fi
