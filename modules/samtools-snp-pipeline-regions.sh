@@ -35,7 +35,7 @@ if [ $# -lt 1 ]
     # Check if a regions file is provided then call mpileup
     if [ $regions == FALSE ]
       then
-        bcftools mpileup -Ou -f $ref--ignore-RG -a AD,ADF,DP,SP,INFO/AD,INFO/ADF \
+        bcftools mpileup -Ou -f $ref --ignore-RG -a AD,ADF,DP,SP,INFO/AD,INFO/ADF \
         "$bamdir"*.bam | bcftools call -mv > "$ID"_raw_variants.vcf
       else
         bcftools mpileup -Ou -f $ref --ignore-RG --regions-file $regions \
