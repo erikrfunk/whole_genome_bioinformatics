@@ -31,6 +31,7 @@ if [ $# -lt 1 ]
     filter="${filter:-F}"
     ID="${ID:-output}"
 
+    date >> log
     echo "making a pileup file for" $ID >> log
     # Check if a regions file is provided then call mpileup
     if [ $regions == FALSE ]
