@@ -22,40 +22,40 @@ if [ $# -lt 1 ]
     r) ref=${OPTARG};;
     g) regions=${OPTARG};;
     f) filter=${OPTARG};;
-    o) ID=${OPTARG};;
+    o) out=${OPTARG};;
     esac
     done
 
     bamdir="${bamdir:-sorted_bam_files/}"
     regions="${regions:-FALSE}"
     filter="${filter:-F}"
-    ID="${ID:-output}"
+    out="${out:-output}"
 
-    date >> log
-    echo "making a pileup file for" $ID >> log
-    # Check if a regions file is provided then call mpileup
+    date >> $out.log
+    echo "making a pileup file for" $out >> $out.log
+    # Check if a regions file is provouted then call mpileup
     if [ $regions == FALSE ]
       then
         bcftools mpileup -Ou -f $ref --ignore-RG -a AD,ADF,DP,SP,INFO/AD,INFO/ADF \
-        "$bamdir"*.bam | bcftools call -mv > "$ID"_raw_variants.vcf
+        "$bamdir"*.bam | bcftools call -mv > "$out"_raw_variants.vcf
       else
         bcftools mpileup -Ou -f $ref --ignore-RG --regions-file $regions \
         -a AD,ADF,DP,SP,INFO/AD,INFO/ADF \
-        "$bamdir"*.bam | bcftools call -mv > "$ID"_raw_variants.vcf
+        "$bamdir"*.bam | bcftools call -mv > "$out"_raw_variants.vcf
     fi
 
     # Check if filtering is required then either filter or pass
-    if [ $filter == T]
+    if [ $filter == T ]
       then
-        echo "filtering low quality snps (<100) for" $ID >> log
+        echo "filtering low quality snps (<100) for" $out >> $out.log
         awk '$1~/^#/ || $6 > 100 {print $0}' > \
-        "$ID"_filtered_variants.vcf "$ID"_raw_variants.vcf
+        "$out"_filtered_variants.vcf "$out"_raw_variants.vcf
         echo "checking the length of column 4 and 5 to make sure
-        they are snp type variants for " $ID >> log
+        they are snp type variants for " $out >> $out.log
         awk '$1~/^#/ || length($4)==1 && length($5)==1 {print $0}'> \
-        "$ID"_filtered_snps.vcf "$ID"_filtered_variants.vcf
+        "$out"_filtered_snps.vcf "$out"_filtered_variants.vcf
       else
-        echo "Not filtering" $ID >> log
+        echo "Not filtering" $out >> $out.log
     fi
 fi
 
@@ -64,18 +64,18 @@ fi
 #ref="/data2/rosyfinches/HouseFinch/final.assembly.homo.fa"
 #bamdir="/data2/rosyfinches/sorted_bam_files/"
 #regions="/data5/meadowlarks/scaffolds1-2000.txt"
-#ID="rosyfinches" # This will be used as a prefix for the output file
+#out="rosyfinches" # This will be used as a prefix for the output file
 
-#echo "making a pileup file for" $ID >> log
+#echo "making a pileup file for" $out >> $out.log
 #can also add the -R flag joined with a scaffold list to subset and parralel
 #bcftools mpileup -Ou -f $ref--ignore-RG --regions-file $regions -a AD,ADF,DP,SP,INFO/AD,INFO/ADF \
-#"$bamdir"*.bam | bcftools call -mv > "$ID"_raw_variants.vcf
-#echo "removing all lines with two comment marks" >> log
-#grep -v "##" "$ID"_snps_indels.vcf > "$ID"_snps_indels_short.vcf
-#echo "filtering low quality snps (<100)" >> log
+#"$bamdir"*.bam | bcftools call -mv > "$out"_raw_variants.vcf
+#echo "removing all lines with two comment marks" >> $out.log
+#grep -v "##" "$out"_snps_indels.vcf > "$out"_snps_indels_short.vcf
+#echo "filtering low quality snps (<100)" >> $out.log
 #awk '$1~/^#/ || $6 > 100 {print $0}' > \
-#"$ID"_snps_indels_filtered.vcf "$ID"_snps_indels_short.vcf
+#"$out"_snps_indels_filtered.vcf "$out"_snps_indels_short.vcf
 #echo "add the header and check length of column 4 and 5 to make sure
-#they are snp type variants" >> log
+#they are snp type variants" >> $out.log
 #awk '$1~/^#/ || length($4)==1 && length($5)==1 {print $0}'> \
-#"$ID"_snps_filtered.vcf "$ID"_snps_indels_filtered.vcf
+#"$out"_snps_filtered.vcf "$out"_snps_indels_filtered.vcf
