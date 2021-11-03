@@ -9,7 +9,7 @@ ID="rosyfinches" # This will be used as a prefix for the output file
 
 echo "making a pileup file for" $ID >> log
 #can also add the -R flag joined with a scaffold list to subset and parralel
-bcftools mpileup -Ou -f $ref--ignore-RG -a AD,ADF,DP,SP,INFO/AD,INFO/ADF \
+bcftools mpileup -Ou -f $ref --ignore-RG -a AD,ADF,DP,SP,INFO/AD,INFO/ADF \
 "$bamdir"*.bam | bcftools call -mv > "$ID"_raw_variants.vcf
 #echo "removing all lines with two comment marks" >> log
 #grep -v "##" "$ID"_snps_indels.vcf > "$ID"_snps_indels_short.vcf
